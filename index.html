@@ -10,12 +10,17 @@
 
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/p5.sound.min.js"></script>
+
+    <link href="https://cdn.commerce7.com/v2/commerce7.css" rel="stylesheet">
   </head>
 
   <body>
-    <script src="sketch.js"></script>
-    <script language='javascript'z>
-      window.addEventListener('message', console.log(event), false);
-    </script>
+    <div id="canvas_shell" style="border:1px solid white">
+      <br> Currently for testing only, not ready for use <br>
+      <script src="sketch.js"></script>
+      <!--<button id="sortButton" onClick="testButton()">Sort Shop Page</button>-->
+    </div>
+    
+    <script type="text/javascript" src="https://cdn.commerce7.com/v2/commerce7.js" id="c7-javascript" data-tenant="archetyp"></script>
   </body>
 </html>

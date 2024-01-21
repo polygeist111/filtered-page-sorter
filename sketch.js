@@ -1,13 +1,42 @@
-const ASK = sbDyLLpdhqqRIv43RgMvQmkaBk9rCBXS7viFpYSHdg6XtaXn6oT0FzCY3wGZtN94;
+const productURL = "https://api.commerce7.com/v1/product?cursor=";
+const collectionURL = "https://api.commerce7.com/v1/collection?page=1";
+const appID = "distribution-catalog-generator";
+const ASK = "sbDyLLpdhqqRIv43RgMvQmkaBk9rCBXS7viFpYSHdg6XtaXn6oT0FzCY3wGZtN94";
 
+let button1;
 
+let productList = [];
+let wineList = [];
+let wines = [];
+let pricedWineList = [];
 
 function setup() {
   createCanvas(400, 400);
+
+  button1 = createButton('Sort Shop Page');
+  button1.parent("canvas_shell");
+  //button1.mousePressed(populateProducts("start"));
+  button1.mousePressed(testButton);
+  //button1.position(200, 200);
+  //console.log(width * 0.5 - button1.width * 0.5, height * 0.5 - button1.height * 0.5);
+  button1.position(width * 0.5 - button1.width * 0.5, height * 0.5 - button1.height * 0.5);
 }
 
 function draw() {
   background(220);
+  stroke(0);
+  strokeWeight(3);
+  line(0, 0, 0, height);
+  line(0, height, width, height);
+  line(width, height, width, 0);
+  line(width, 0, 0, 0);
+}
+
+function testButton() {
+  //console.log('button works');
+  //populateProducts("start");
+  fetchCollections(collectionURL);
+
 }
 
 
@@ -25,8 +54,6 @@ function populateProducts(cursorIn) {
     }
   })
   .catch(e => { console.log(e) });
-
-  repositionButtons();
 }
 
 
@@ -38,7 +65,7 @@ async function fetchWines(url = "") {
   const response = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Basic Y2F0YWxvZy1nZW5lcmF0b3ItaW50ZWdyYXRpb24tdGVzdDpoS00wN01LcHE0aHVhZ2tMRHVrQ3FjRnU1R1FBTWVORUM2dWVpRU1ma09EdGQwUmFhNVYxZWlQRVhCaWtESDM5",
+      "Authorization": "Basic ZmlsdGVyZWQtcGFnZS1zb3J0ZXI6c2JEeUxMcGRocXFSSXY0M1JnTXZRbWthQms5ckNCWFM3dmlGcFlTSGRnNlh0YVhuNm9UMEZ6Q1kzd0dadE45NA==",
       "Tenant": "archetyp",
     },
   });
@@ -49,12 +76,27 @@ async function fetchWines(url = "") {
 
 } 
 
+async function fetchCollections(url = "") {
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Basic ZmlsdGVyZWQtcGFnZS1zb3J0ZXI6c2JEeUxMcGRocXFSSXY0M1JnTXZRbWthQms5ckNCWFM3dmlGcFlTSGRnNlh0YVhuNm9UMEZ6Q1kzd0dadE45NA==",
+      "Tenant": "archetyp",
+    },
+  });
+  const parsedJSON = await response.json();
+  console.log(parsedJSON);
+  //const newCursor = await parsedJSON.cursor;
+  //const collections = await parsedJSON.products;
+  //return [products, newCursor]; //returns array of products as well as ending cursor value (essentially, next page index)
+
+} 
 
 
 //Filters productList to wineList, making sure only available wines and bundles are included
 function populateWineList() {
   productList.forEach(item => {
-    if(item.webStatus === "Available" && (item.type === "Wine" /*|| item.type === "Bundle"*/)) { 
+    if(item.webStatus === "Available" && (item.type === "Wine")) { 
       append(wineList, item) } 
   });
   sortWineList();
@@ -79,10 +121,7 @@ function sortWineList() {
   });
   for (var i = 0; i < wines.length; i++) {
     wineList.splice(i, 1, wines[i]);
-  }/*
-  for (var i = 0; i < bundles.length; i++) {
-    wineList.splice(wines.length + i, 1, bundles[i]);
-  }*/
+  }
   console.log(wineList);
   
   //moves winelist into 2d array with space for prices
@@ -139,6 +178,8 @@ function wineName(wine) {
 
 }
 
+
+
 /*
 *
 *
@@ -147,4 +188,15 @@ function wineName(wine) {
 *"Type" ENUMs: error, info, success
 *https://developer.commerce7.com/docs/app-extensions
 *
+*/
+
+
+/*
+
+General idea:
+seeing as you can't directly update collection contents via api,
+sort collection alphabetically excluding vintage,
+then iterate from a to z, remove product from active collection if it's there
+iterate a to z again, add back in order
+
 */
